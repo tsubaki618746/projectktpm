@@ -40,24 +40,42 @@ jobs:
           mkdir -p data
           chmod +x mvnw
       
-      - name: Start Backend
+      - name: Start Backend (First time - to initialize data)
         run: |
           cd backend
           ./mvnw spring-boot:run > backend.log 2>&1 &
-          echo "Waiting for backend to start..."
-          for i in {1..40}; do
+          BACKEND_PID=$!
+          echo "Backend PID: $BACKEND_PID"
+          echo "Waiting for backend to initialize..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8080 > /dev/null 2>&1; then
+              echo "Backend is ready!"
+              sleep 5
+              break
+            fi
+            sleep 3
+          done
+          echo "Stopping backend to reload HashMap..."
+          kill $BACKEND_PID || true
+          sleep 3
+      
+      - name: Start Backend (Second time - with data loaded)
+        run: |
+          cd backend
+          ./mvnw spring-boot:run > backend.log 2>&1 &
+          echo "Waiting for backend to start with data..."
+          for i in {1..30}; do
             if curl -s http://localhost:8080 > /dev/null 2>&1; then
               echo "Backend is ready!"
               sleep 3
               break
             fi
-            echo "Attempt $i/40..."
             sleep 3
           done
-          echo "Checking if testuser exists..."
+          echo "Testing login..."
           curl -X POST http://localhost:8080/api/auth/login \
             -H "Content-Type: application/json" \
-            -d '{"username":"testuser","password":"Test123"}' || echo "Login test failed"
+            -d '{"username":"testuser","password":"Test123"}' -v
       
       - name: Start Frontend
         run: |
