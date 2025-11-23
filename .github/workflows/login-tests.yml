@@ -31,7 +31,7 @@ jobs:
       - name: backend
         run: |
           cd backend
-          ./mvnw spring-boot:run
+          cd mvn spring-boot:run & sleep 30
       
       # ✅ BẮT BUỘC: Start Frontend Server
       - name: Start Frontend Server
