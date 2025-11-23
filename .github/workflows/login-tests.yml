@@ -1,0 +1,47 @@
+name: Login Tests CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-login:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          cd fontend
+          npm install
+      
+      - name: Run Login Unit Tests
+        run: |
+          cd fontend
+          npm test -- --testPathPattern=Login
+      
+      # ✅ BẮT BUỘC: Start Frontend Server
+      - name: Start Frontend Server
+        run: |
+          cd fontend
+          npm run dev &
+          sleep 10
+      
+      # ✅ BẮT BUỘC: Install Cypress dependencies
+      - name: Install Cypress Dependencies
+        run: |
+          sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev
+      
+      # ✅ Bây giờ mới chạy E2E tests
+      - name: Run Login E2E Tests
+        run: |
+          cd fontend
+          npx cypress run --spec "cypress/e2e/login.e2e.spec.js"
