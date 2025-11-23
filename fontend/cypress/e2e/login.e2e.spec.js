@@ -21,12 +21,12 @@ describe('Login E2E Tests', () => {
         cy.get('[data-testid="password-input"]').type('Test123');
         cy.get('[data-testid="login-button"]').click();
 
-        // Kiểm tra thông báo thành công
-        cy.get('[data-testid="login-message"]')
+        // Kiểm tra thông báo thành công (tăng timeout vì API có thể chậm)
+        cy.get('[data-testid="login-message"]', { timeout: 10000 })
             .should('contain', 'thành công');
 
         // Kiểm tra redirect hoặc token được lưu
-        cy.url().should('include', '/dashboard');
+        cy.url({ timeout: 10000 }).should('include', '/dashboard');
     });
 
     // b) Test validation messages (0.5 điểm)
@@ -101,7 +101,7 @@ describe('Login E2E Tests', () => {
         cy.get('[data-testid="username-input"]').type('testuser');
         cy.get('[data-testid="password-input"]').type('Test123{enter}');
 
-        cy.get('[data-testid="login-message"]')
+        cy.get('[data-testid="login-message"]', { timeout: 10000 })
             .should('contain', 'thành công');
     });
 
