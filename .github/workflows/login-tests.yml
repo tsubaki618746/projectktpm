@@ -31,29 +31,63 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
-          distribution: 'temurin'  # ← THÊM THỤT LỀ Ở ĐÂY
-          java-version: '17'       # ← THÊM THỤT LỀ Ở ĐÂY
-          
-      - name: Start Backend Server
-        run: |                     # ← THÊM THỤT LỀ Ở ĐÂY
-          cd backend
-          ./mvnw spring-boot:run &
-          sleep 30  # Đợi backend khởi động
+          distribution: 'temurin'
+          java-version: '17'
       
-      # ✅ BẮT BUỘC: Start Frontend Server
+      - name: Build Backend
+        run: |
+          cd backend
+          chmod +x mvnw
+          ./mvnw clean package -DskipTests
+      
+      - name: Start Backend Server
+        run: |
+          cd backend
+          nohup ./mvnw spring-boot:run > backend.log 2>&1 &
+          echo $! > backend.pid
+      
+      - name: Wait for Backend
+        run: |
+          echo "Waiting for backend to be ready..."
+          for i in {1..60}; do
+            if curl -f http://localhost:8080/api/auth/login -X POST -H "Content-Type: application/json" -d '{"username":"test","password":"test"}' 2>/dev/null; then
+              echo "Backend is ready!"
+              break
+            fi
+            if [ $i -eq 60 ]; then
+              echo "Backend failed to start!"
+              cat backend/backend.log
+              exit 1
+            fi
+            echo "Attempt $i/60: Backend not ready yet..."
+            sleep 2
+          done
+      
+      - name: Install Cypress Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2
+      
       - name: Start Frontend Server
         run: |
           cd fontend
           npm run dev &
-          sleep 10
+          npx wait-on http://localhost:3000 --timeout 60000
       
-      # ✅ BẮT BUỘC: Install Cypress dependencies
-      - name: Install Cypress Dependencies
-        run: |
-          sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev
-      
-      # ✅ Bây giờ mới chạy E2E tests
       - name: Run Login E2E Tests
         run: |
           cd fontend
           npx cypress run --spec "cypress/e2e/login.e2e.spec.js"
+      
+      - name: Upload Screenshots on Failure
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-screenshots
+          path: fontend/cypress/screenshots
+      
+      - name: Show Backend Logs on Failure
+        if: failure()
+        run: |
+          echo "=== Backend Logs ==="
+          cat backend/backend.log || echo "No backend logs found"
