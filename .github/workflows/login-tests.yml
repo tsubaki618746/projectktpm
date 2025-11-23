@@ -34,19 +34,30 @@ jobs:
           cd fontend
           npm test -- --testPathPattern=Login
       
+      - name: Prepare Backend
+        run: |
+          cd backend
+          mkdir -p data
+          chmod +x mvnw
+      
       - name: Start Backend
         run: |
           cd backend
-          chmod +x mvnw
           ./mvnw spring-boot:run > backend.log 2>&1 &
-          echo "Waiting for backend..."
-          for i in {1..30}; do
+          echo "Waiting for backend to start..."
+          for i in {1..40}; do
             if curl -s http://localhost:8080 > /dev/null 2>&1; then
               echo "Backend is ready!"
+              sleep 3
               break
             fi
-            sleep 2
+            echo "Attempt $i/40..."
+            sleep 3
           done
+          echo "Checking if testuser exists..."
+          curl -X POST http://localhost:8080/api/auth/login \
+            -H "Content-Type: application/json" \
+            -d '{"username":"testuser","password":"Test123"}' || echo "Login test failed"
       
       - name: Start Frontend
         run: |
