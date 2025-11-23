@@ -31,14 +31,14 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
-        distribution: 'temurin'
-        java-version: '17'
+          distribution: 'temurin'  # ← THÊM THỤT LỀ Ở ĐÂY
+          java-version: '17'       # ← THÊM THỤT LỀ Ở ĐÂY
           
       - name: Start Backend Server
-        run: |
-        cd backend
-        ./mvnw spring-boot:run &
-        sleep 30  # Đợi backend khởi động
+        run: |                     # ← THÊM THỤT LỀ Ở ĐÂY
+          cd backend
+          ./mvnw spring-boot:run &
+          sleep 30  # Đợi backend khởi động
       
       # ✅ BẮT BUỘC: Start Frontend Server
       - name: Start Frontend Server
