@@ -27,6 +27,18 @@ jobs:
         run: |
           cd fontend
           npm test -- --testPathPattern=Login
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+        distribution: 'temurin'
+        java-version: '17'
+          
+      - name: Start Frontend Server
+        run: |
+        cd fontend
+        npm run dev &
+        sleep 10
       
       # ✅ BẮT BUỘC: Start Frontend Server
       - name: Start Frontend Server
