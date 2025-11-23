@@ -34,11 +34,11 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
           
-      - name: Start Frontend Server
+      - name: Start Backend Server
         run: |
-        cd fontend
-        npm run dev &
-        sleep 10
+        cd backend
+        ./mvnw spring-boot:run &
+        sleep 30  # Đợi backend khởi động
       
       # ✅ BẮT BUỘC: Start Frontend Server
       - name: Start Frontend Server
