@@ -22,9 +22,10 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Backend Tests
+      - name: Run Tests
         run: |
           cd backend
+          chmod +x ./mvnw  # Thêm dòng này
           ./mvnw clean test
       
       - name: Prepare Backend
