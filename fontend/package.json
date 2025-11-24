@@ -12,7 +12,6 @@
         "cypress:run": "cypress run",
         "test:e2e": "start-server-and-test dev http://localhost:3000 cypress:run",
         "cypress:run:login": "cypress run --spec 'cypress/e2e/login.e2e.spec.js'"
-
     },
     "dependencies": {
         "react": "^18.2.0",
