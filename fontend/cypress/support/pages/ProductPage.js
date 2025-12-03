@@ -1,16 +1,16 @@
-// Page Object Model cho Product Page
+// Page Object Model cho trang Product (Quản lý sản phẩm)
 class ProductPage {
-    // Visit product page
+    // Vào trang danh sách sản phẩm
     visit() {
         cy.visit('/products');
     }
 
-    // Click nút "Thêm sản phẩm"
+    // Nhấn nút "Thêm sản phẩm" để mở form thêm mới
     clickAddNew() {
         cy.get('[data-testid="add-product-btn"]').click();
     }
 
-    // Fill form thêm/sửa sản phẩm
+    // Điền thông tin sản phẩm vào form thêm/sửa
     fillProductForm(product) {
         cy.get('[data-testid="product-name"]').clear().type(product.name);
         cy.get('[data-testid="product-price"]').clear().type(product.price);
@@ -21,51 +21,51 @@ class ProductPage {
         cy.get('[data-testid="product-category"]').clear().type(product.category);
     }
 
-    // Submit form
+    // Nhấn nút gửi form (thêm/sửa)
     submitForm() {
         cy.get('[data-testid="submit-button"]').click();
     }
 
-    // Get success message
+    // Lấy phần tử chứa thông báo thành công
     getSuccessMessage() {
         return cy.get('[data-testid="success-message"]');
     }
 
-    // Get product in list by name
+    // Tìm dòng sản phẩm trong danh sách theo tên sản phẩm
     getProductInList(name) {
         return cy.contains('[data-testid^="product-row"]', name);
     }
 
-    // Click edit button for a product
+    // Nhấn nút sửa sản phẩm với tên sản phẩm cho trước
     clickEdit(productName) {
         this.getProductInList(productName)
             .find('[data-testid^="edit-button"]')
             .click();
     }
 
-    // Click delete button for a product
+    // Nhấn nút xóa sản phẩm với tên sản phẩm cho trước
     clickDelete(productName) {
         this.getProductInList(productName)
             .find('[data-testid^="delete-button"]')
             .click();
     }
 
-    // Confirm delete dialog
+    // Xác nhận hộp thoại xác nhận xóa
     confirmDelete() {
         cy.on('window:confirm', () => true);
     }
 
-    // Get product table
+    // Lấy bảng danh sách sản phẩm
     getProductTable() {
         return cy.get('[data-testid="product-table"]');
     }
 
-    // Check if product exists in list
+    // Kiểm tra sản phẩm với tên cho trước có tồn tại trong danh sách
     productShouldExist(name) {
         cy.contains('[data-testid^="product-row"]', name).should('exist');
     }
 
-    // Check if product does not exist in list
+    // Kiểm tra sản phẩm với tên cho trước không tồn tại trong danh sách
     productShouldNotExist(name) {
         cy.get('[data-testid^="product-name"]').each(($el) => {
             expect($el.text()).not.to.contain(name);
