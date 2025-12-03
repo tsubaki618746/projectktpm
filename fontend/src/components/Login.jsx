@@ -3,6 +3,7 @@ import { validateUsername, validatePassword } from '../utils/validation';
 import { loginAPI } from '../services/authService';
 
 export default function Login() {
+  //các state quản lý trạng thái login
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -12,7 +13,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate inputs
+     // Kiểm tra validate từng input, trả về lỗi nếu có
     const usernameError = validateUsername(username);
     const passwordError = validatePassword(password);
 
