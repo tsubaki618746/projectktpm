@@ -192,6 +192,7 @@ describe('Product E2E Tests', () => {
             .should('contain', 'đ');
     });
 
+    
     it('TC14: Nên load lại danh sách sau khi thêm sản phẩm mới', () => {
         // Đếm số sản phẩm ban đầu
         cy.get('[data-testid^="product-row"]').its('length').then((initialCount) => {
