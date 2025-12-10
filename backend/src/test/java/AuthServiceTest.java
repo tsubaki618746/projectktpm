@@ -33,8 +33,11 @@ class AuthServiceTest {
         LoginResponse response = authService.authenticate(request);
         
         // Then
+        //Kiểm tra trạng thái đăng nhập -> Thành công
         assertTrue(response.isSuccess());
+        //Kiểm tra thông báo trả về -> Đăng nhập thành công
         assertEquals("Dang nhap thanh cong", response.getMessage());
+        //Kiểm tra token trả về -> không null
         assertNotNull(response.getToken());
     }
 
@@ -48,7 +51,9 @@ class AuthServiceTest {
         LoginResponse response = authService.authenticate(request);
         
         // Then
+        //Kiểm tra trạng thái đăng nhập -> Thất bại
         assertFalse(response.isSuccess());
+        //Kiểm tra thông báo trả về -> Tên đăng nhập hoặc mật khẩu không đúng
         assertEquals("Ten dang nhap hoac mat khau khong dung", response.getMessage());
     }
 
@@ -77,6 +82,7 @@ class AuthServiceTest {
         
         // Then
         assertFalse(response.isSuccess());
+        //Kiểm tra thông báo trả về -> Username phải có từ 3-50 ký tự
         assertTrue(response.getMessage().contains("Username phai co tu 3-50 ky tu"));
     }
 
@@ -119,6 +125,7 @@ class AuthServiceTest {
         
         // Then
         assertFalse(response.isSuccess());
+        //Kiểm tra thông báo trả về -> Password phải có ít nhất một chữ cái và một số
         assertTrue(response.getMessage().contains("Password phai co it nhat mot chu cai va mot so"));
     }
 
@@ -148,6 +155,7 @@ class AuthServiceTest {
         boolean result = authService.validateUsername(validUsername);
         
         // Then
+        //Kiểm tra kết quả validate -> True
         assertTrue(result);
     }
 
@@ -161,6 +169,7 @@ class AuthServiceTest {
         boolean result = authService.validateUsername(invalidUsername);
         
         // Then
+        //Kiểm tra kết quả validate -> False
         assertFalse(result);
     }
 

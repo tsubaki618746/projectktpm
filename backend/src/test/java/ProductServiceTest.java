@@ -44,15 +44,19 @@ class ProductServiceTest {
         ProductDto productDto = new ProductDto(null, "Laptop", 15000000.0, 10, "Electronics");
         Product product = new Product(1L, "Laptop", 15000000.0, 10, "Electronics");
         
+        //Giả lập bằng mockito -> Khi productRepository.save() được gọi thì lập tức trả về product mà không cần gọi xuống repository
         when(productRepository.save(any(Product.class))).thenReturn(product);
         
         // When
         ProductDto result = productService.createProduct(productDto);
         
         // Then
+        //Kiểm tra kết quả trả về không null
         assertNotNull(result);
+        //Kiểm tra Tên và giá của sản phẩm mới đúng với sản phẩm được tạo
         assertEquals("Laptop", result.getName());
         assertEquals(15000000.0, result.getPrice());
+        //Đảm bảo chỉ gọi 1 lần productRepository.save()
         verify(productRepository, times(1)).save(any(Product.class));
     }
     
@@ -60,6 +64,7 @@ class ProductServiceTest {
     @DisplayName("TC2: Tao san pham that bai khi du lieu null")
     void testCreateProduct_NullData() {
         // When & Then
+        //Mong muốn trả về ngoại lệ khi tạo sản phẩm null
         assertThrows(IllegalArgumentException.class, () -> {
             productService.createProduct(null);
         });
@@ -72,6 +77,7 @@ class ProductServiceTest {
         ProductDto productDto = new ProductDto(null, "", 15000000.0, 10, "Electronics");
         
         // When & Then
+        //Mong muốn trả về ngoại lệ khi tạo sản phẩm không có tên
         assertThrows(IllegalArgumentException.class, () -> {
             productService.createProduct(productDto);
         });
